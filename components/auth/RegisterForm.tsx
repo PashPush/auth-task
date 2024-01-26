@@ -16,13 +16,48 @@ import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import { ErrorForm } from '../ErrorForm'
 import { SuccessForm } from '../SuccessForm'
-import { useTransition, useState } from 'react'
+import { useTransition, useState, useEffect } from 'react'
 import { register } from '@/actions/register'
+import { useSearchParams } from 'next/navigation'
+import { check } from '@/actions/check'
 
 export const RegisterForm = () => {
 	const [error, setError] = useState<string | undefined>('')
 	const [success, setSuccess] = useState<string | undefined>('')
+	const [isReferred, setIsReferred] = useState<boolean>(false)
 	const [isPending, startTransition] = useTransition()
+
+	const params = useSearchParams()
+
+	const currentRef = params?.get('ref')
+
+	useEffect(() => {
+		// Проверяем наличие и валидность реферального кода
+
+		const checkRef = async () => {
+			if (currentRef) {
+				await checkReferralCode(currentRef)
+			} else {
+				setIsReferred(false) // Если нет кода, перенаправляем на ошибку
+			}
+		}
+		checkRef()
+	}, [currentRef])
+
+	const checkReferralCode = async (ref: string) => {
+		const response = await check(ref)
+
+		console.log('response: ', response)
+
+		if (response) {
+			setIsReferred(true)
+		} else {
+			setIsReferred(false) // Если код не валиден
+		}
+	}
+
+	console.log('isReferred: ', isReferred)
+	console.log(currentRef)
 
 	const form = useForm<z.infer<typeof RegisterSchema>>({
 		resolver: zodResolver(RegisterSchema),
@@ -30,6 +65,7 @@ export const RegisterForm = () => {
 			email: '',
 			password: '',
 			name: '',
+			fromRef: currentRef || '',
 		},
 	})
 
@@ -46,10 +82,16 @@ export const RegisterForm = () => {
 	}
 	return (
 		<FullCard
-			headerLabel='Регистрация'
-			backButtonLabel='Есть аккаунт?'
+			heading='Регистрация'
+			headerLabel={
+				isReferred
+					? 'Добро пожаловать'
+					: 'Доступно только по реферальной ссылке'
+			}
+			backButtonLabel='Есть аккаунт? Войти'
 			backButtonHref='/auth/login'
 			showSocial
+			socialDisabled={!isReferred}
 		>
 			<Form {...form}>
 				<form className='space-y-6' onSubmit={form.handleSubmit(onSubmit)}>
@@ -63,7 +105,8 @@ export const RegisterForm = () => {
 									<FormControl>
 										<Input
 											{...field}
-											disabled={isPending}
+											disabled={isPending || !isReferred}
+											autoFocus
 											placeholder='Ваше имя'
 											type='text'
 										/>
@@ -81,7 +124,7 @@ export const RegisterForm = () => {
 									<FormControl>
 										<Input
 											{...field}
-											disabled={isPending}
+											disabled={isPending || !isReferred}
 											placeholder='your@email.ru'
 											type='email'
 										/>
@@ -99,7 +142,7 @@ export const RegisterForm = () => {
 									<FormControl>
 										<Input
 											{...field}
-											disabled={isPending}
+											disabled={isPending || !isReferred}
 											placeholder='******'
 											type='password'
 										/>
@@ -108,10 +151,26 @@ export const RegisterForm = () => {
 								</FormItem>
 							)}
 						/>
+						<FormField
+							control={form.control}
+							name='fromRef'
+							render={({ field }) => (
+								<FormItem>
+									<FormControl>
+										<Input {...field} type='hidden' />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 					</div>
 					<SuccessForm message={success} />
 					<ErrorForm message={error} />
-					<Button type='submit' disabled={isPending} className='w-full'>
+					<Button
+						type='submit'
+						disabled={isPending || !isReferred}
+						className='w-full'
+					>
 						Создать аккаунт
 					</Button>
 				</form>
