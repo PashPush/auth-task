@@ -1,5 +1,4 @@
 import { FullCard } from '@/components/auth/FullCard'
-import { Card } from '@/components/ui/card'
 import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
 import React from 'react'
 
