@@ -47,17 +47,12 @@ export const RegisterForm = () => {
 	const checkReferralCode = async (ref: string) => {
 		const response = await check(ref)
 
-		console.log('response: ', response)
-
 		if (response) {
 			setIsReferred(true)
 		} else {
 			setIsReferred(false) // Если код не валиден
 		}
 	}
-
-	console.log('isReferred: ', isReferred)
-	console.log(currentRef)
 
 	const form = useForm<z.infer<typeof RegisterSchema>>({
 		resolver: zodResolver(RegisterSchema),
