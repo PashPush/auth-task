@@ -25,3 +25,16 @@ export const getUserById = async (id: string) => {
 		return null
 	}
 }
+
+export const getUserByRef = async (ref: string) => {
+	try {
+		const user = await db.user.findUnique({
+			where: {
+				userRef: ref,
+			},
+		})
+		return user
+	} catch {
+		return null
+	}
+}

@@ -15,4 +15,5 @@ export const RegisterSchema = z.object({
 		.string()
 		.min(6, { message: 'Пароль должен состоять минимум из 6 символов' }),
 	name: z.string().min(1, { message: 'Введите имя' }),
+	fromRef: z.string(),
 })

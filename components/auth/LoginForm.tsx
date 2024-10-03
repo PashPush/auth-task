@@ -15,13 +15,13 @@ import { FullCard } from './FullCard'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import { ErrorForm } from '../ErrorForm'
-import { SuccessForm } from '../SuccessForm'
+// import { SuccessForm } from '../SuccessForm'
 import { login } from '@/actions/login'
 import { useTransition, useState } from 'react'
 
 export const LoginForm = () => {
 	const [error, setError] = useState<string | undefined>('')
-	const [success, setSuccess] = useState<string | undefined>('')
+	// const [success, setSuccess] = useState<string | undefined>('')
 	const [isPending, startTransition] = useTransition()
 
 	const form = useForm<z.infer<typeof LoginSchema>>({
@@ -34,19 +34,20 @@ export const LoginForm = () => {
 
 	const onSubmit = (values: z.infer<typeof LoginSchema>) => {
 		setError('')
-		setSuccess('')
+		// setSuccess('')
 
 		startTransition(() => {
 			login(values).then((data) => {
-				setError(data.error)
-				setSuccess(data.success)
+				setError(data?.error)
+				// setSuccess(data?.success)
 			})
 		})
 	}
 	return (
 		<FullCard
+			heading='Авторизация'
 			headerLabel='Добро пожаловать'
-			backButtonLabel='Еще нет аккаунта?'
+			backButtonLabel='Регистрация. Только по реферальной ссылке'
 			backButtonHref='/auth/register'
 			showSocial
 		>
@@ -63,6 +64,7 @@ export const LoginForm = () => {
 										<Input
 											{...field}
 											disabled={isPending}
+											autoFocus
 											placeholder='your@email.ru'
 											type='email'
 										/>
@@ -90,7 +92,7 @@ export const LoginForm = () => {
 							)}
 						/>
 					</div>
-					<SuccessForm message={success} />
+					{/* <SuccessForm message={success} /> */}
 					<ErrorForm message={error} />
 					<Button type='submit' disabled={isPending} className='w-full'>
 						Войти

@@ -7,28 +7,32 @@ import { Social } from './Social'
 
 interface FullCardProps {
 	children: React.ReactNode
+	heading: string
 	headerLabel: string
 	backButtonLabel: string
 	backButtonHref: string
 	showSocial?: boolean
+	socialDisabled?: boolean
 }
 
 export const FullCard = ({
 	children,
+	heading,
 	headerLabel,
 	backButtonLabel,
 	backButtonHref,
 	showSocial,
+	socialDisabled,
 }: FullCardProps) => {
 	return (
 		<Card className='w-[400px] shadow-md'>
 			<CardHeader>
-				<Header label={headerLabel} />
+				<Header label={headerLabel} heading={heading} />
 			</CardHeader>
 			<CardContent>{children}</CardContent>
 			{showSocial && (
 				<CardFooter>
-					<Social />
+					<Social isDisabled={socialDisabled} />
 				</CardFooter>
 			)}
 			<CardFooter>
