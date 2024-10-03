@@ -8,15 +8,14 @@ import { ExitIcon } from '@radix-ui/react-icons'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Header } from '@/components/auth/Header'
 import { useState } from 'react'
-import { Input } from '@/components/ui/input'
 
 const AccountPage = () => {
 	const [showUserRef, setShowUserRef] = useState(false)
 	const [isCopied, setIsCopied] = useState(false)
 	const user = useCurrentUser()
-	const userRef = `${
-		process.env.NEXT_PUBLIC_DOMAIN
-	}/auth/register?ref=${user?.userRef!}`
+	const userRef = `${process.env.NEXT_PUBLIC_DOMAIN}/auth/register?ref=${
+		user?.userRef ?? ''
+	}`
 
 	console.log('user: ', user)
 	return (
