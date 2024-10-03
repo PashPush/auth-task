@@ -9,8 +9,6 @@ export async function check(ref: string) {
 		where: { userRef: ref },
 	})
 
-	console.log('referral: ', referral)
-
 	if (referral && referral.userRef) {
 		cookies().set('validRef', ref, { httpOnly: true })
 		return true

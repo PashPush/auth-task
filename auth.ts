@@ -67,7 +67,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 			if (token.userRef && session.user) {
 				session.user.userRef = token.userRef
 			}
-			console.log({ SessionTOK: token })
 			return session
 		},
 		async jwt({ token }) {
